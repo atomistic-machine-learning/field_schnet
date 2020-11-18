@@ -1,5 +1,7 @@
 # @package _group_
 
+field_mode: "field"
+
 representation:
   _target_: field_schnet.representation.FieldSchNet
   features: 32
@@ -8,7 +10,7 @@ representation:
   dipole_cutoff: ${model.representation.cutoff}
   interactions: 3
   num_gaussians: 25
-  field_mode: "field"
+  field_mode: ${model.field_mode}
   required_fields: null
 
 output:
