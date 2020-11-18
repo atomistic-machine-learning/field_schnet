@@ -1,0 +1,54 @@
+PSF EXT
+
+       3 !NTITLE
+ REMARKS original generated structure x-plor psf file
+ REMARKS topology ethanol_qm_opt_autopsf-temp.top 
+ REMARKS segment XO1 { first none; last none; auto angles dihedrals }
+
+       9 !NATOM
+         1 XO1      1        ETOH     C1       CG321    0.050000       12.0110           0
+         2 XO1      1        ETOH     O1       OG311   -0.650000       15.9994           0
+         3 XO1      1        ETOH     HO1      HGP1     0.420000        1.0080           0
+         4 XO1      1        ETOH     H11      HGA2     0.090000        1.0080           0
+         5 XO1      1        ETOH     H12      HGA2     0.090000        1.0080           0
+         6 XO1      1        ETOH     C2       CG331   -0.270000       12.0110           0
+         7 XO1      1        ETOH     H21      HGA3     0.090000        1.0080           0
+         8 XO1      1        ETOH     H22      HGA3     0.090000        1.0080           0
+         9 XO1      1        ETOH     H23      HGA3     0.090000        1.0080           0
+
+       8 !NBOND: bonds
+         1         6         1         2         1         4         1         5
+         2         3         6         7         6         8         6         9
+
+      13 !NTHETA: angles
+         1         6         9         1         6         8         1         6         7
+         1         2         3         2         1         5         2         1         4
+         4         1         5         6         1         5         6         1         4
+         6         1         2         7         6         9         7         6         8
+         8         6         9
+
+      12 !NPHI: dihedrals
+         2         1         6         7         2         1         6         8
+         2         1         6         9         3         2         1         6
+         3         2         1         4         3         2         1         5
+         4         1         6         7         4         1         6         8
+         4         1         6         9         5         1         6         7
+         5         1         6         8         5         1         6         9
+
+       0 !NIMPHI: impropers
+
+
+       0 !NDON: donors
+
+
+       0 !NACC: acceptors
+
+
+       0 !NNB
+
+         0         0         0         0         0         0         0         0
+         0
+
+       1       0 !NGRP
+         0         0         0
+
