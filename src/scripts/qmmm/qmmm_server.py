@@ -60,20 +60,17 @@ class FieldSchNetDriver(QMMMDriver):
         """
         Load model and activate properties for atomic charges.
         """
-        model = torch.load(model_path).to(self.device)
+        model = torch.load(model_path, map_location=device).to(self.device)
 
         requested_properties = model.requested_properties
         requested_properties += [Properties.dipole_derivatives]
 
-        # Turn of shielding, as it is not required
-        # requested_properties.remove(Properties.shielding)
-
-        # model = field_schnet.model.PropertyModel(
-        model = field_schnet.model.FieldSchNetModel(
+        model = field_schnet.atomistic.FieldSchNetModel(
             model.field_representation,
             model.energy_model,
             requested_properties=requested_properties
         )
+
         return model
 
     def _create_input(self, namd_data):
@@ -114,9 +111,13 @@ class FieldSchNetDriver(QMMMDriver):
         results['charges'] = self._compute_charges(results[Properties.dipole_derivatives])
 
         # Print dipole for IR
-        shifts = torch.einsum("aii->a", results[Properties.shielding][0])
-        print(("QMMM-SHIFTS:" + " {:20.11f}" * shifts.shape[0]).format(*shifts))
-        print("QMMM-DIPOLE: {:20.11f} {:20.11f} {:20.11f}".format(*results[Properties.dipole_moment][0]))
+        if Properties.dipole_moment in results:
+            print("QMMM-DIPOLE: {:20.11f} {:20.11f} {:20.11f}".format(*results[Properties.dipole_moment][0]))
+
+        # Print shifts for NMR
+        if Properties.shielding in results:
+            shifts = torch.einsum("aii->a", results[Properties.shielding][0])
+            print(("QMMM-SHIFTS:" + " {:20.11f}" * shifts.shape[0]).format(*shifts))
 
         # Convert to numpy arrays
         self.results = {}
@@ -204,5 +205,5 @@ if __name__ == '__main__':
                 # Increment accepted connections
                 accepted_connections += 1
 
-            if accepted_connections == args.max_connections:
+            if accepted_connections == args.max_connections + 1:
                 break
