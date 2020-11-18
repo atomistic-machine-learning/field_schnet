@@ -22,7 +22,7 @@ _**Note: We recommend using a GPU for training the neural networks.**_
 
 Clone the repository:
 ```
-git clone https://github.com/atomistic-machine-learning/schnetpack.git
+git clone git@github.com:atomistic-machine-learning/field_schnet.git
 cd field_schnet
 ```
 
