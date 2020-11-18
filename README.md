@@ -47,7 +47,7 @@ All FieldSchNet scripts used in the example are inserted into your PATH during i
 
 ### Training the model
 
-A reference dataset `ethanol_vacuum.db` in ASE db format  (see [1] for details on the method) can be found in
+A reference dataset `ethanol_vacuum.db` in ASE db format  (see [1] for details on the data) can be found in
 the `example` directory.
 
 A FieldSchNet model can be trained on this dataset via
@@ -69,8 +69,8 @@ The best model is stored in the file `best_model` in the same directory.
 
 ### Performing molecular dynamics and computing spectra
 
-Once a model has been trained for ethanol, it can be used to simulate various molecular spectra (a pre-trained model can
-be found under `example/ethanol_vacuum.model`). 
+Once a model has been trained for ethanol, it can be used to simulate various molecular spectra (a pre-trained example
+model can be found under `example/ethanol_vacuum.model`). 
 
 #### MD
 
@@ -140,6 +140,46 @@ the command line. E.g. changing the training command to
 field_schnet_run.py data_path=<PATH/TO/>ethanol_vacuum.db basename=<modeldir> cuda=true tradeoffs=electromagnetic
 ```
 will also include NMR shielding tensors during model training.
+
+## QM/MM with FieldSchNet
+
+In order to use FieldSchNet in QM/MM simulations, a model first needs to be trained on reference data containing either
+external charge positions and magnitudes or the corresponding external field acting on each atom.
+QM/MM training is initialized via
+```
+field_schnet_run.py data_path=<PATH/TO/>ethanol_vacuum.db basename=<modeldir> cuda=true model.field_mode=qmmm
+```
+
+The FieldSchNet package provides two scripts `qmmm_client.py` and `qmmm_server.py` (`src/scripts/qmmm`) to perform
+QM/MM simulations with the NAMD QM/MM interface (http://www.ks.uiuc.edu/Research/qmmm/).
+
+To use a FieldSchNet model, the QM/MM specification in the NAMD configuration file must be updated to include:
+```
+QMPointChargeScheme none
+QMBondScheme    "cs"
+qmSoftware      "custom"
+qmExecPath      "<PATH/TO/>qmmm_client.py" --port <port_number>
+``` 
+where `<port_number>` specifies the port used in the socket interface.
+
+To start the simulation, first QM/MM server is initialized which will perform the QM/MM computations:
+```
+python <PATH/TO/>qmmm_server.py <port_number> <max_connections>
+```
+`<port_number>` is the same as used above and `<max_connections>` is the maximum number of calculations accepted by the
+server (should be the same as the number of steps in the QM/MM simulation). Use of the GPU can be toggled via `--cuda`.
+
+Given all other prerequisites have been satisfied, QM/MM can then be performed by running NAMD with the modified config
+file:
+```
+namd2 <namd_config>.conf
+```
+
+A sample setup for QM/MM with ethanol and a FieldSchNet model is provided in `examples/qmmm_ethanol` (without pretrained
+model).
+Sample reference data for training ethanol QM/MM models is provided in the `ethanol_qmmm.db` database 
+(`examples` directory, see [1] for details on how the data was generated). 
+
 
 ## References
 
