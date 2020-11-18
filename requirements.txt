@@ -1,0 +1,11 @@
+PyYAML
+--index-url https://pypi.python.org/simple/
+
+torch>=0.4.1
+numpy
+ase>=3.19
+tensorboardX
+h5py
+tqdm
+hydra>=1.0.0
+schnetpack>=0.3.0
