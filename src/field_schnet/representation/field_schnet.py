@@ -7,7 +7,7 @@ from schnetpack import Properties
 import schnetpack.nn as spknn
 
 from field_schnet.nn.field_interactions import *
-from field_schnet.nn.field_generators import ReactionField, PointChargeField
+from field_schnet.nn.field_generators import ReactionField
 from field_schnet.nn import MollifierCutoff
 
 __all__ = [
@@ -102,12 +102,6 @@ class FieldSchNet(nn.Module):
         else:
             self.solvent_field = None
 
-        # Field for external point charges
-        if self.field_mode == "qmmm":
-            self.external_charge_field = PointChargeField()
-        else:
-            self.external_charge_field = None
-
     def forward(self, inputs):
         atomic_numbers = inputs[Properties.Z]
         positions = inputs[Properties.R]
@@ -115,14 +109,6 @@ class FieldSchNet(nn.Module):
         cell_offset = inputs[Properties.cell_offset]
         neighbors = inputs[Properties.neighbors]
         neighbor_mask = inputs[Properties.neighbor_mask]
-
-        # Apply field of external point charges
-        if self.external_charge_field is not None:
-            external_charge_field = self.external_charge_field(
-                positions,
-                inputs['external_charge_positions'],
-                inputs['external_charges'],
-            )
 
         # Spatial features
         r_ij, v_ij = self.distances(positions, neighbors, cell, cell_offset, neighbor_mask=neighbor_mask)
@@ -148,12 +134,12 @@ class FieldSchNet(nn.Module):
             # Field updates
             for field in self.fields:
                 # Modify the external field if a implicit solvent is present
-                if self.solvent_field is not None and field == Properties.electric_field:
+                if self.field_mode == "solvent" and field == Properties.electric_field:
                     effective_field = self.solvent_field[l](
                         x, mu[field], inputs[field], inputs[Properties.dielectric_constant]
                     )
-                elif self.external_charge_field is not None and field == Properties.electric_field:
-                    effective_field = inputs[field][:, None, None, :] + external_charge_field
+                elif self.field_mode == "qmmm" and field == Properties.electric_field:
+                    effective_field = inputs[field][:, :, None, :]
                 else:
                     effective_field = inputs[field][:, None, None, :]
 

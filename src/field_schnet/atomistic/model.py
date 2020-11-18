@@ -3,6 +3,7 @@ import torch.nn as nn
 
 from field_schnet.nn import general_derivative
 from schnetpack import Properties
+from field_schnet.nn.field_generators import PointChargeField
 
 
 class FieldSchNetModel(nn.Module):
@@ -28,6 +29,13 @@ class FieldSchNetModel(nn.Module):
         # For compatibility with schnet model loading:
         self.output_modules = []
 
+        # Settings of field for QM/MM
+        # Field for external point charges
+        if self.field_mode == "qmmm":
+            self.external_charge_field = PointChargeField()
+        else:
+            self.external_charge_field = None
+
         for p in requested_properties:
             grads = Properties.required_grad[p]
             for grad in grads:
@@ -43,10 +51,19 @@ class FieldSchNetModel(nn.Module):
         for g in self.grads_required:
             if g == Properties.position:
                 inputs[Properties.R].requires_grad = True
-            if g == Properties.electric_field:
+            if g == Properties.electric_field and g in inputs:
                 inputs[Properties.electric_field].requires_grad = True
             if g == Properties.magnetic_field:
                 inputs[Properties.magnetic_field].requires_grad = True
+
+        # Apply field of external point charges if necessary
+        if self.field_mode == "qmmm":
+            if 'external_charge_positions' in inputs:
+                inputs[Properties.electric_field] = self.external_charge_field(
+                    inputs[Properties.R],
+                    inputs['external_charges'],
+                    inputs['external_charge_positions'],
+                )
 
         # Get representation, inputs and mu0 if it is there.
         x, mu0 = self.field_representation(inputs)
