@@ -1,0 +1,16 @@
+# @package _group_
+
+representation:
+  _target_: field_schnet.representation.FieldSchNet
+  features: 32
+  cutoff: ${cutoff}
+  dipole_features: ${model.representation.features}
+  dipole_cutoff: ${model.representation.cutoff}
+  interactions: 3
+  num_gaussians: 25
+  field_mode: "field"
+  required_fields: null
+
+output:
+  _target_: field_schnet.atomistic.FieldSchNetModel
+

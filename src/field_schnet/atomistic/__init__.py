@@ -1,0 +1,1 @@
+from field_schnet.atomistic.model import *

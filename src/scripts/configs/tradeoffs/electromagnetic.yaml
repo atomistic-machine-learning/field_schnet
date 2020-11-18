@@ -1,0 +1,6 @@
+# @package _group_
+dipole_moment: 0.05
+energy: 1.0
+forces: 5.0
+polarizability: 0.001
+shielding: 10.0

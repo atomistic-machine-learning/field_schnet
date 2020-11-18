@@ -1,0 +1,9 @@
+# @package _group_
+dipole_derivatives: 1.0
+dipole_moment: 1.0
+energy: 1.0
+forces: 1.0
+hessian: 1.0
+polarizability: 1.0
+polarizability_derivatives: 1.0
+shielding: 1.0

@@ -1,0 +1,39 @@
+device: cpu
+seed: 5465562365
+simulation_dir: MDDIR
+overwrite: true
+calculator:
+  type: custom
+  calculator_module: field_schnet.md.calculators
+  class_name: FieldSchNetCalculator
+  model_file: PATH/TO/MODEL
+  required_properties:
+  - energy
+  - forces
+  - dipole_moment
+  - polarizability
+system:
+  molecule_file: PATH/TO/XYZ_FILE
+  n_replicas: 1
+  initializer:
+    type: maxwell-boltzmann
+    temperature: 100.0
+    remove_translation: true
+    remove_rotation: true
+dynamics:
+  n_steps: 100000
+  integrator:
+    type: verlet
+    time_step: 0.50
+  thermostat:
+    type: nhc
+    temperature: 300
+    time_constant: 100
+logging:
+  file_logger:
+    buffer_size: 1
+    streams:
+    - molecules
+    - properties
+  write_checkpoints: 100
+  temperature_logger: 1

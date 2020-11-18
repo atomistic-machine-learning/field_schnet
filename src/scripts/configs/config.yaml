@@ -1,0 +1,43 @@
+defaults:
+  - tradeoffs: electric
+  - model: field_schnet
+
+basename: experiment
+cuda: false
+cutoff: 9.449
+mode: train
+data_path: ???
+load_config: null
+
+data:
+  num_train: 900
+  num_val: 100
+  batch_size: 20
+  val_batch_size: 40
+  test_batch_size: 40
+  split_file: split.npz
+
+training:
+  lr: 1e-3
+  lr_decay: 0.8
+  lr_patience: 25
+  max_epochs: 2000
+  logger: csv
+  log_every_n_epochs: 1
+
+evaluation:
+  split: test
+
+hydra:
+  run:
+    dir: ${basename}
+  job:
+    config:
+      override_dirname:
+        exclude_keys:
+          - basename
+          - data.dataset.molecule
+          - data.num_train
+          - data.num_val
+        kv_sep: '='
+        item_sep: '_'

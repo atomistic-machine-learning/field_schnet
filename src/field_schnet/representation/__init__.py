@@ -1,0 +1,1 @@
+from field_schnet.representation.field_schnet import *
