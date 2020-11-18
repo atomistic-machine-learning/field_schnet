@@ -92,9 +92,8 @@ It will generate the directory specified in `simulation_dir` and store the resul
 MD related data (such as forces, properties and velocities) are stored in an hdf5 file
 (`<simulation_dir>/simulation.hdf5`).
 
-In general, data can be extracted using the `HDF5Loader` utility provided with SchNetPack
-(`schnetpack.md.utils.hdf5_data`).
-Here we provide the script `field_schnet_extract_hdf5.py` which can be used to convert the sampled structures to
+In general, data can be extracted using the `HDF5Loader` utility of SchNetPack (`schnetpack.md.utils.hdf5_data`).
+For comvenience, we provide the script `field_schnet_extract_hdf5.py` which can be used to convert the sampled structures to
 XYZ-format
 ```
 field_schnet_extract_hdf5.py <simulation_dir>/simulation.hdf5 <xyz_directory>
@@ -110,7 +109,7 @@ To compute, store and plot spectra based on the above MD run, execute:
 ```
 field_schnet_spectra_hdf5.py <simulation_dir>/simulation.hdf5 <spectrum.npz> --spectra ir raman --plot --skip_initial 10000
 ```
-This will generate infrared and polarized and depolarized Raman spectra and plot them to the screen. The spectrum data
+This will generate infrared and polarized and depolarized Raman spectra and plot them to the screen (`--plot`). The spectrum data
 will also be stored to the `<spectrum.npz>` file. `--skip_initial 10000` indicates, that the first 10000 steps (5 ps) of
 the trajectory should be seen as equilibration period and be skipped.
 
