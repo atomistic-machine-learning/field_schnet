@@ -177,7 +177,7 @@ namd2 <namd_config>.conf
 
 A sample setup for QM/MM with ethanol and a FieldSchNet model is provided in `examples/qmmm_ethanol` (without pretrained
 model).
-Sample reference data for training ethanol QM/MM models is provided in the `ethanol_qmmm.db` database 
+Sample reference data for training ethanol QM/MM models is provided in the `ethanol_qmmm.db` database as a `tar` archive 
 (`examples` directory, see [1] for details on how the data was generated). 
 
 
