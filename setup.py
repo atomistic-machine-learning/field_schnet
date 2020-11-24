@@ -26,6 +26,6 @@ setup(
         "torch>=0.4.1",
         "numpy",
         "ase>=3.16",
-        "hydra>=1.0.0"
+        "hydra-core>=1.0"
     ]
 )
