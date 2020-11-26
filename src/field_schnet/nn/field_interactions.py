@@ -121,8 +121,10 @@ class TensorInteraction(nn.Module):
         outer_term = torch.sum(mu[:, :, None, :, :] * distance_vector[:, :, :, None, :], dim=4) + \
                      torch.sum(mu_j * distance_vector[:, :, :, None, :], dim=4)
 
+        # Save division
+        inverse_distances = torch.where(distances == 0, torch.ones_like(distances), 1.0 / distances)
         # Inverse r^5 in this term
-        radial = self.distance_expansion(f_ij) / distances[..., None] ** 5
+        radial = self.distance_expansion(f_ij) * inverse_distances[..., None] ** 5
 
         # Apply shielding
         if self.shielding is not None:
