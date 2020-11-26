@@ -53,16 +53,23 @@ def prepare_data(cfg):
         ),
     }
 
+    # Get atomref if present in metadata
+    atomref = data.get_atomref(spk.Properties.energy)
+    if atomref[spk.Properties.energy] is not None:
+        logging.info("Using atomic reference energies...")
+
     # Compute statistics
     if cfg.mode == "train":
         logging.info("Computing statistics...")
-        mean, stddev = loaders["train"].get_statistics(spk.Properties.energy, divide_by_atoms=True)
+        mean, stddev = loaders["train"].get_statistics(
+            spk.Properties.energy, divide_by_atoms=True, single_atom_ref=atomref
+        )
         logging.info("{:s} mean:   {:10.5f}".format(spk.Properties.energy, mean[spk.Properties.energy].numpy()[0]))
         logging.info("{:s} stddev: {:10.5f}".format(spk.Properties.energy, stddev[spk.Properties.energy].numpy()[0]))
     else:
         mean, stddev = None, None
 
-    return loaders, mean, stddev
+    return loaders, mean, stddev, atomref
 
 
 def prepare_model(cfg, mean=None, stddev=None, atomref=None):
@@ -80,7 +87,7 @@ def prepare_model(cfg, mean=None, stddev=None, atomref=None):
             cfg.model.representation.features,
             mean=mean[spk.Properties.energy],
             stddev=stddev[spk.Properties.energy],
-            atomref=atomref,
+            atomref=atomref[spk.Properties.energy],
         )
 
         model = hydra.utils.instantiate(
@@ -210,10 +217,10 @@ def main(cfg: DictConfig) -> None:
         cfg = OmegaConf.merge(cfg, loaded_config)
 
     # Load data and compute statistics
-    loaders, mean, stddev = prepare_data(cfg)
+    loaders, mean, stddev, atomref = prepare_data(cfg)
 
     # Prepare model
-    model = prepare_model(cfg, mean=mean, stddev=stddev)
+    model = prepare_model(cfg, mean=mean, stddev=stddev, atomref=atomref)
 
     # Training mode
     if cfg.mode == "train":
