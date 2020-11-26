@@ -147,7 +147,7 @@ In order to use FieldSchNet in QM/MM simulations, a model first needs to be trai
 external charge positions and magnitudes or the corresponding external field acting on each atom.
 QM/MM training is initialized via
 ```
-field_schnet_run.py data_path=<PATH/TO/>ethanol_vacuum.db basename=<modeldir> cuda=true model.field_mode=qmmm
+field_schnet_run.py data_path=<PATH/TO/>ethanol_qmmm.db basename=<modeldir> cuda=true model.field_mode=qmmm
 ```
 
 The FieldSchNet package provides two scripts `qmmm_client.py` and `qmmm_server.py` (`src/scripts/qmmm`) to perform
@@ -177,7 +177,7 @@ namd2 <namd_config>.conf
 
 A sample setup for QM/MM with ethanol and a FieldSchNet model is provided in `examples/qmmm_ethanol` (without pretrained
 model).
-Sample reference data for training ethanol QM/MM models is provided in the `ethanol_qmmm.db` database 
+Sample reference data for training ethanol QM/MM models is provided in the `ethanol_qmmm.db` database as a `tar` archive 
 (`examples` directory, see [1] for details on how the data was generated). 
 
 
