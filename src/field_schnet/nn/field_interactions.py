@@ -118,8 +118,8 @@ class TensorInteraction(nn.Module):
         # mu_i @ Tij @ mu_j.T = mu_i @ ( -1 rij^2 + 3 Rij.T Rij ) @ mu_j
         #                     = -(mu_i @ mu_j.T)*rij^2 + 3 (mu_i @ Rij.T)*(mu_j @ Rij)
         diagonal_term = torch.sum(mu[:, :, None, :, :] * mu_j, dim=4) * distances[..., None] ** 2
-        outer_term = torch.sum(mu[:, :, None, :, :] * distance_vector[:, :, :, None, :], dim=4) + \
-                     torch.sum(mu_j * distance_vector[:, :, :, None, :], dim=4)
+        outer_term = torch.sum(mu[:, :, None, :, :] * distance_vector[:, :, :, None, :], dim=4) * torch.sum(
+            mu_j * distance_vector[:, :, :, None, :], dim=4)
 
         # Save division
         inverse_distances = torch.where(distances == 0, torch.ones_like(distances), 1.0 / distances)
