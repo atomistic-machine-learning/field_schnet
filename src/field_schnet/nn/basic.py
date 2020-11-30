@@ -1,9 +1,12 @@
 import torch
+import torch.nn as nn
 from torch.autograd import grad
+import schnetpack as spk
 
 __all__ = [
     "collect_neighbors",
-    "general_derivative"
+    "general_derivative",
+    "AtomDistances"
 ]
 
 
@@ -48,3 +51,49 @@ def general_derivative(fx, dx, hessian=False, create_graph=True, retain_graph=Tr
     # print('=======================')
 
     return dfxdx
+
+
+class AtomDistances(nn.Module):
+    r"""Layer for computing distance of every atom to its neighbors.
+
+    Args:
+        return_directions (bool, optional): if True, the `forward` method also returns
+            normalized direction vectors.
+
+    """
+
+    def __init__(self, return_directions=False, normalize_vecs=True):
+        super(AtomDistances, self).__init__()
+        self.return_directions = return_directions
+        self.normalize_vecs = normalize_vecs
+
+    def forward(
+        self, positions, neighbors, cell=None, cell_offsets=None, neighbor_mask=None
+    ):
+        r"""Compute distance of every atom to its neighbors.
+
+        Args:
+            positions (torch.Tensor): atomic Cartesian coordinates with
+                (N_b x N_at x 3) shape.
+            neighbors (torch.Tensor): indices of neighboring atoms to consider
+                with (N_b x N_at x N_nbh) shape.
+            cell (torch.tensor, optional): periodic cell of (N_b x 3 x 3) shape.
+            cell_offsets (torch.Tensor, optional): offset of atom in cell coordinates
+                with (N_b x N_at x N_nbh x 3) shape.
+            neighbor_mask (torch.Tensor, optional): boolean mask for neighbor
+                positions. Required for the stable computation of forces in
+                molecules with different sizes.
+
+        Returns:
+            torch.Tensor: layer output of (N_b x N_at x N_nbh) shape.
+
+        """
+        return spk.nn.atom_distances(
+            positions,
+            neighbors,
+            cell,
+            cell_offsets,
+            return_vecs=self.return_directions,
+            normalize_vecs=self.normalize_vecs,
+            neighbor_mask=neighbor_mask,
+        )

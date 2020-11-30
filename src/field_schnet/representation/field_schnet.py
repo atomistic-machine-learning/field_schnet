@@ -8,7 +8,7 @@ import schnetpack.nn as spknn
 
 from field_schnet.nn.field_interactions import *
 from field_schnet.nn.field_generators import ReactionField
-from field_schnet.nn import MollifierCutoff
+from field_schnet.nn import MollifierCutoff, AtomDistances
 
 __all__ = [
     "FieldSchNet"
@@ -39,7 +39,7 @@ class FieldSchNet(nn.Module):
         self.embedding = nn.Embedding(max_z, features, padding_idx=0)
 
         # spatial features
-        self.distances = spknn.AtomDistances(return_directions=True)
+        self.distances = AtomDistances(return_directions=True, normalize_vecs=False)
 
         # Distance expansion
         self.distance_expansion = spknn.GaussianSmearing(0.0, cutoff, num_gaussians)
