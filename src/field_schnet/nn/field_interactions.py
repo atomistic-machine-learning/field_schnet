@@ -136,7 +136,7 @@ class TensorInteraction(nn.Module):
         if neighbor_mask is not None:
             radial = radial * neighbor_mask[..., None]
 
-        v = (3 * diagonal_term - outer_term) * radial
+        v = (diagonal_term - 3 * outer_term) * radial
 
         # Sum over neighbors
         v = torch.sum(v, 2)
