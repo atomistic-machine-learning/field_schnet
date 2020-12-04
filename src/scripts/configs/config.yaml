@@ -12,7 +12,7 @@ load_config: null
 data:
   num_train: 900
   num_val: 100
-  batch_size: 20
+  batch_size: 30
   val_batch_size: 40
   test_batch_size: 40
   split_file: split.npz
