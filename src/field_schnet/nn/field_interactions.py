@@ -27,10 +27,7 @@ class DipoleLayer(nn.Module):
         super(DipoleLayer, self).__init__()
         if transform:
             self.transform = nn.Sequential(
-                # spk.nn.Dense(atom_features, atom_features, activation=None, bias=False),
-                spk.nn.Dense(atom_features, atom_features, activation=activation),
-                # spk.nn.Dense(atom_features, dipole_features, activation=activation),
-                spk.nn.Dense(atom_features, dipole_features, activation=None, bias=False),
+                spk.nn.Dense(atom_features, dipole_features, activation=None, bias=False, weight_init=spknn.zeros_initializer),
             )
         else:
             self.transform = None
@@ -43,9 +40,6 @@ class DipoleLayer(nn.Module):
             q = self.transform(x)
         else:
             q = x
-
-        print(torch.sum(q, dim=(1, 2)), "QS")
-        print(torch.norm(q, dim=2)[0], "HERE")
 
         # Get neighbor contributions
         q_ij = collect_neighbors(q, neighbors)
@@ -103,14 +97,12 @@ class TensorInteraction(nn.Module):
         self.shielding = shielding
 
         self.dense = nn.Sequential(
-            spknn.Dense(dipole_features, dipole_features, activation=spknn.shifted_softplus),
-            # spknn.Dense(dipole_features, atom_features)
+            spknn.Dense(dipole_features, atom_features, activation=spknn.shifted_softplus),
         )
 
         self.distance_expansion = nn.Sequential(
-            spknn.Dense(n_gaussians, dipole_features, activation=None, bias=False),
-            # spknn.Dense(n_gaussians, dipole_features, activation=spknn.shifted_softplus),
-            # spknn.Dense(dipole_features, dipole_features)  # , bias_init=spknn.zeros_initializer)
+            spknn.Dense(n_gaussians, dipole_features, activation=spknn.shifted_softplus),
+            spknn.Dense(dipole_features, dipole_features, weight_init=spknn.zeros_initializer)
         )
 
     def forward(self, mu, distances, distance_vector, neighbors, f_ij, neighbor_mask=None):
@@ -143,7 +135,6 @@ class TensorInteraction(nn.Module):
             radial = radial * neighbor_mask[..., None]
 
         v = (-diagonal_term + 3 * outer_term) * radial  # (FS)
-        # v = (diagonal_term - 3 * outer_term) * radial  # (true sign)
 
         # Sum over neighbors
         v = torch.sum(v, 2)
