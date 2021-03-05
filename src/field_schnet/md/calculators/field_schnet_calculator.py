@@ -41,9 +41,6 @@ class FieldSchNetCalculator(SchnetPackCalculator):
             cutoff_lr=None,
         )
 
-        self.model.field_mode = "field"
-        self.model.field_representation.field_mode = "field"
-
         # Check which fields are present
         if not self._check_is_parallel():
             if hasattr(self.model, 'field_representation'):
