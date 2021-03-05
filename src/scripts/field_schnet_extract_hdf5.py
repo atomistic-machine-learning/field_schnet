@@ -51,7 +51,7 @@ def write_molecules(args):
         mol_n_atoms = n_atoms[molecule]
         mol_atom_types = atom_types[molecule, :mol_n_atoms]
 
-        mol_structures = database.properties[Properties.position][:, :, molecule, ...]
+        mol_structures = database.properties[Properties.position][:, :, molecule, ...] * MDUnits.internal2unit("Bohr")
         mol_velocities = database.properties["velocities"][:, :, molecule, ...]
 
         basename = os.path.join(args.target_dir, 'mol_{:03d}'.format(molecule + 1))
