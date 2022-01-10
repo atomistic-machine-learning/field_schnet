@@ -191,7 +191,7 @@ def eval(cfg, model, loaders):
 
     results = []
 
-    if split == "traim" or split == "all":
+    if split == "train" or split == "all":
         logging.info("Evaluating training error...")
         results.append(['training'] + ['%.5f' % i for i in evaluate_dataset(metrics, model, loaders["train"], device)])
     if split == "val" or split == "all":
