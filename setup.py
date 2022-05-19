@@ -22,7 +22,7 @@ setup(
     package_dir={'': 'src'},
     python_requires='>=3.6',
     install_requires=[
-        "schnetpack>=0.3.0"
+        "schnetpack>=0.3.0",
         "torch>=0.4.1",
         "numpy",
         "ase>=3.16",
